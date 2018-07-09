@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*-
+
+# Define your item pipelines here
+#
+# Don't forget to add your pipeline to the ITEM_PIPELINES setting
+# See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+
+import sqlite3
+
+class CarscraperPipeline(object):
+    connection = sqlite3.connect("cars.db")
+    def start_spider(self,spider):
+        connection.execute('''CREATE TABLE CARS 
+                              (ID INTEGER PRIMARY KEY,
+                               NAME              TEXT  NOT NULL );''')
+        print("HELOOOOOOOOOOOOOOOOOO THEEEEEEEEEEEERRRRRRRRRRRRRRRREEEEEEE")
+    def close_spider(self,spider):
+        cursor = self.connection.execute("SELECT NAME from CARS")
+        for each in cursor:
+            print(each)
+        self.connection.commit()
+        self.connection.close()
+        
+    def process_item(self, item, spider):
+        # inserting the items name into the insert statement. one more time. Say it with me. Insert.
+        self.connection.execute("INSERT INTO CARS (NAME) VALUES ('" + item['name'] +"')")
+        return item
